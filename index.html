@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SRI VEDA TALENT COMPETITION — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --sv-blue: #00008B;
+      --sv-orange: #FF8C00;
+      --sv-yellow: #FFD700;
+      --sv-maroon: #800000;
+      --old-maroon: #8b3a3a;
+      --maroon-2: #6f2e2e;
+      --gold: #ffd700;
+      --page-max-width: 1600px;
+      --lock-color: #6c757d;
+      --login-primary: #3b82f6; 
+      --tc-live-color: #ff8c00; 
+      --tc-background-color: #fff9f9; /* Lighter background for TC panel */
+    }
+    .bg-sv-blue { background-color: var(--sv-blue); }
+    .text-sv-blue { color: var(--sv-blue); }
+    .bg-sv-orange { background-color: var(--sv-orange); }
+    .text-sv-orange { color: var(--sv-orange); }
+    .bg-sv-yellow { background-color: var(--sv-yellow); }
+    .text-sv-yellow { color: var(--sv-yellow); }
+    .hover\:shadow-sv-yellow\/50:hover {
+        box-shadow: 0 10px 15px -3px var(--sv-yellow), 0 4px 6px -4px var(--sv-yellow);
+    }
+    .course-button {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        margin: 0.2rem;
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #333;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .course-button:hover {
+        background-color: var(--sv-orange);
+        color: white;
+        border-color: var(--sv-orange);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    /* UPDATED: Nav Button Style to match the requested size/border/font and improve text fit */
+    .nav-button {
+        display: flex;
+        align-items: center;
+        /* Adjusted padding to make background box fit text better */
+        padding: 0.5rem 1rem; 
+        color: var(--maroon-2); /* Dark text color */
+        background-color: white; 
+        border: 2px solid var(--sv-orange); /* Matched to user's old code border */
+        border-radius: 9999px;
+        font-size: 0.9rem; /* Matched to user's old code font size */
+        font-weight: 800; /* Bolder font */
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        justify-content: center; 
+    }
+    .nav-button:hover {
+        color: white;
+        background-color: var(--sv-orange);
+        border-color: var(--sv-blue);
+        transform: scale(1.03); 
+        box-shadow: 0 6px 15px rgba(255, 140, 0, 0.6);
+    }
+    /* Custom class to handle wide flex distribution and GAPS */
+    .nav-btn-flex {
+        /* Ensuring button width adapts to text while respecting layout rules */
+        flex-grow: 0; 
+        flex-shrink: 0;
+        flex-basis: auto; 
+        margin: 4px 20px; /* Increased margin for requested gap */
+        max-width: none; 
+    }
+    /* UPDATED: Menu Button Style to match the user's reference */
+    .menu-button-primary {
+        background-color: var(--sv-orange) !important;
+        color: white !important;
+        border-color: var(--sv-yellow) !important; 
+        border-width: 2px !important; /* Adjusted border width */
+    }
+    .menu-button-primary:hover {
+        background-color: white !important;
+        color: var(--sv-orange) !important;
+        border-color: var(--sv-orange) !important; 
+    }
+    
+    * { box-sizing:border-box }
+    body {
+      margin:0;
+      font-family: 'Roboto Slab', serif;
+      background: linear-gradient(160deg, #ffffff 50%, #fdf8f8 100%); 
+      color:#222;
+      padding-top: 20px; /* Added padding since header is gone */
+    }
+    a { color:inherit; text-decoration: none; }
+    
+    .hidden { display: none !important; }
+    
+    .loading-spinner {
+        animation: spin 1s linear infinite;
+        width: 20px; 
+        height: 20px;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .welcome-stars { 
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      max-width:var(--page-max-width);
+      margin:5px auto; 
+      padding:0 20px;
+      color:#6f2e2e 
+    }
+    .welcome { font-size:clamp(14px,2vw,20px) }
+    .welcome .student-name { color:#b33030;font-weight:700 }
+    
+    /* NEW STYLES FOR SUBSCRIPTION BADGE */
+    .subscription-badge {
+        padding: 5px 12px;
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: all 0.3s;
+        cursor: help;
+        display: inline-flex;
+        align-items: center;
+        letter-spacing: 0.5px;
+    }
+    .badge-free { 
+        background-color: #e0e0e0; 
+        color: #555; 
+        border: 1px solid #ccc; 
+    }
+    .badge-silver { 
+        background-color: #c0c0c0; 
+        color: #333; 
+        border: 1px solid #a0a0a0; 
+        background: linear-gradient(135deg, #f0f0f0, #c0c0c0);
+    }
+    .badge-gold { 
+        background-color: #FFD700; 
+        color: #800000; 
+        border: 1px solid #ccac00; 
+        background: linear-gradient(135deg, #ffeb8d, #FFD700);
+    }
+    .badge-platinum { 
+        background-color: #e5e4e2; 
+        color: #00008B; 
+        border: 1px solid #b8b8b8; 
+        background: linear-gradient(45deg, #e0e0e0, #ffffff); 
+    }
+    /* END NEW STYLES FOR SUBSCRIPTION BADGE */
+
+    /* NEW STYLES FOR CLASS SELECTOR */
+    .class-selector-box {
+        max-width: var(--page-max-width);
+        margin: 15px auto; /* Reset margin for spacing */
+        padding: 0; /* Removed padding */
+        background: transparent; /* Removed background */
+        border-radius: 0; /* Removed border-radius */
+        box-shadow: none; /* Removed shadow */
+        border: none; /* Removed border */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px; /* Reduced gap */
+    }
+    .class-selector-box label {
+        /* REMOVED - user requested no label */
+        display: none; 
+    }
+    .class-selector-controls {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 10px; /* Reduced gap */
+        width: auto; /* Auto width */
+    }
+    .class-selector-box select {
+        padding: 8px 12px; /* Reduced padding */
+        font-size: 0.9rem; /* Smaller font */
+        border: 1px solid #ddd; /* Thinner border */
+        border-radius: 8px; /* Smaller radius */
+        font-weight: 700;
+        font-family: 'Roboto Slab', serif;
+        flex: 1 1 auto;
+        cursor: pointer;
+    }
+    .class-selector-box button {
+        padding: 8px 20px; /* Reduced padding */
+        font-size: 0.9rem; /* Smaller font */
+        border: none;
+        border-radius: 8px; /* Smaller radius */
+        background: var(--sv-orange);
+        color: #fff;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(255, 140, 0, 0.2); /* Lighter shadow */
+        flex: 1 1 auto;
+    }
+    .class-selector-box button:hover {
+        background: var(--sv-blue);
+        box-shadow: 0 4px 12px rgba(0, 0, 139, 0.2);
+        transform: translateY(-1px);
+    }
+    /* END NEW STYLES FOR CLASS SELECTOR */
+
+    /* MODIFIED: NEW STYLISTIC SRM CONTACT SECTION */
+    .srm-contact-section {
+        max-width: var(--page-max-width);
+        margin: 20px auto;
+        padding: 20px 25px;
+        background: linear-gradient(135deg, #f0f8ff, #e6f7ff); /* Light blue/white gradient */
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 139, 0.15); /* Shadow with a hint of Veda Blue */
+        border: 3px solid var(--sv-blue); /* Prominent blue border */
+        /* text-align: center; */
+    }
+    .srm-contact-section h2 {
+        font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+        color: var(--sv-blue); /* Veda Blue text */
+        text-transform: uppercase;
+        font-weight: 900;
+        margin-bottom: 15px;
+        text-align: center; /* Keep heading centered */
+    }
+    .srm-info-card {
+        background: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        display: flex; 
+        flex-direction: column; /* Default stack on mobile */
+        gap: 15px;
+    }
+    @media (min-width: 768px) {
+        .srm-info-card {
+            flex-direction: row; /* Two columns on desktop */
+            align-items: center;
+        }
+    }
+    .srm-left-explanation {
+        flex: 1 1 50%;
+        padding-right: 15px;
+        font-size: 0.95rem;
+        color: #333;
+        line-height: 1.5;
+        border-bottom: 1px solid #ddd; /* Separator on mobile */
+        padding-bottom: 10px;
+    }
+    @media (min-width: 768px) {
+        .srm-left-explanation {
+            border-bottom: none;
+            border-right: 1px solid #ddd; /* Vertical separator on desktop */
+            padding-bottom: 0;
+            padding-right: 25px;
+        }
+    }
+    .srm-detail-group {
+        flex: 1 1 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding-left: 10px;
+    }
+
+    .srm-detail {
+        margin: 5px 0;
+        text-align: left;
+    }
+    .srm-label {
+        font-size: 0.9rem;
+        color: #555;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+        display: block;
+    }
+    .srm-value {
+        font-size: 1.2rem;
+        color: var(--maroon-2);
+        font-weight: 800;
+    }
+    .srm-value a {
+        color: var(--sv-orange);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .srm-value a:hover {
+        color: var(--old-maroon);
+    }
+    /* END NEW STYLISTIC SRM CONTACT SECTION */
+
+
+    /* MODIFIED: NEW STYLISH TC SCORE PANEL (Minimal height, English) */
+    .tc-panel-wrap { 
+      max-width:var(--page-max-width);
+      margin:15px auto; 
+      padding:0 16px;
+    }
+    .tc-panel-main {
+      padding: 5px 15px; /* Reduced padding */
+      border-radius: 12px;
+      background: var(--tc-background-color);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 1px solid #ffcccc; /* Light red border */
+      height: 60px; /* Reduced height for minimal box */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tc-panel-live-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 30%; /* Initial width */
+      background: linear-gradient(90deg, #ffc107, var(--tc-live-color), #ff5722);
+      background-size: 200% 100%;
+      animation: liveScroll 8s linear infinite;
+      z-index: 1;
+      border-radius: 12px 0 0 12px;
+      transition: width 1s ease-out; 
+    }
+    @keyframes liveScroll {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    .tc-content-overlay {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        color: var(--maroon-2);
+        font-weight: 800;
+        font-size: clamp(1rem, 2vw, 1.2rem);
+    }
+    
+    .tc-score-display {
+        background: white;
+        padding: 4px 10px; /* Smaller padding */
+        border-radius: 6px; /* Smaller radius */
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+    .tc-score-display h2 { 
+        font-size: clamp(1.1rem, 2vw, 1.3rem);
+        margin: 0;
+        color: var(--sv-orange);
+    }
+    .tc-score-display small {
+        font-size: 0.75rem; /* Smaller font */
+        color: #555;
+        font-weight: 700;
+    }
+
+    /* Styles for the actions list below the main bar (REMOVED) */
+    
+    /* MODIFIED: Added very light blue background to free test promo section */
+    .free-test-promo-section { 
+      max-width:var(--page-max-width);
+      margin:10px auto; 
+      padding:15px 16px; 
+      text-align:center;
+      background: #f0f8ff; /* Very light blue */
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #cceeff;
+    }
+
+    .free-test-promo-section h3 { font-size:clamp(1.3rem, 2.5vw, 1.6rem);color:var(--maroon-2);margin-bottom:8px;font-weight:800;text-shadow:1px 1px 1px rgba(0,0,0,0.05) }
+    .free-test-promo-section p { max-width:700px;margin:0.5rem auto 1rem auto;font-size:0.95rem;line-height:1.4;color:#333 } 
+    .free-test-promo-section button { 
+        padding:10px 20px;
+        font-size:1rem;
+        border:none;border-radius:10px;
+        background:linear-gradient(135deg, #1e6b34, #4caf50);
+        color:#fff;
+        font-weight:800;
+        cursor:pointer;
+        transition:transform 0.2s, box-shadow 0.2s;
+        box-shadow:0 4px 10px rgba(76, 175, 80, 0.3) 
+    }
+    .free-test-promo-section button:hover { 
+        transform:translateY(-2px);
+        box-shadow:0 6px 15px rgba(76, 175, 80, 0.4) 
+    }
+    .live-tests { width:100%;padding:10px 0;background:transparent } 
+    .tests-inner { max-width:var(--page-max-width);margin:0 auto;padding:0 12px }
+    .test-row { display:flex;justify-content:center;flex-wrap:wrap;gap:12px } 
+    .test-card { 
+        padding:12px;
+        min-height:140px;
+        width:clamp(280px, 100%, 360px);
+        background:#fff;
+        border-radius:12px;
+        box-shadow:none;
+        position:relative;
+        overflow:hidden;
+        transition:transform .18s ease;
+    } 
+    .test-card h3 { margin:8px 0;font-size:1rem; }
+    .test-lead { font-size:.9rem;line-height:1.4;margin-bottom:8px; }
+    .card-actions { gap:8px }
+    .btn-test { 
+        padding:8px 12px;
+        font-size:.85rem;
+        background:linear-gradient(135deg,#009688,#00e0b3);
+        color:#fff;border:none;
+        border-radius:10px;
+        font-weight:800;
+        cursor:pointer;
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+    } 
+    .student-report { 
+      max-width:var(--page-max-width);
+      margin:10px auto; 
+      padding:0 16px 
+    }
+    .sr-box { 
+      background:#fff;
+      border-radius:14px;
+      padding:12px; 
+      overflow:hidden 
+    }
+    
+    /* Plan promo box (REMOVED) */
+    
+    .sr-stats { display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:0 } 
+    .stat { 
+        padding:10px;
+        background:linear-gradient(180deg,#fffdeb,#fff7c9);
+        border-radius:10px;
+        text-align:center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    } 
+    .stat-icon { width:32px;height:32px;margin-bottom:4px } 
+    .stat-label { font-size:0.85rem; color: #555; margin-top: 4px; }
+    .stat-value { font-size:0.95rem; font-weight: 900; }
+    .subject-tests { 
+      max-width: var(--page-max-width);
+      margin: 20px auto; 
+      padding: 15px; 
+      background: #f5fbf5;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .subject-tests h2 { text-align: center;font-size: clamp(1.4rem, 2.5vw, 1.8rem);color: #1e6b34;text-transform: uppercase;letter-spacing: 1px;margin-bottom: 20px;font-weight: 800;text-decoration: underline;text-underline-offset: 6px;text-decoration-thickness: 2px }
+    .test-list-container { gap: 10px; display: flex; flex-direction: column; } 
+    .test-list-item { 
+        padding: 12px 16px; 
+        gap: 12px; 
+        display: flex;flex-wrap: wrap;align-items: center;justify-content: space-between;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid #d4e9d9;
+    } 
+    .test-list-item-content { flex: 1 1 300px }
+    .test-list-item-content h3 { font-size: clamp(1rem, 3.5vw, 1.1rem);margin: 0 0 2px 0;color: #1e6b34; } 
+    .test-list-item-content p { font-size: clamp(0.8rem, 2.5vw, 0.9rem);color: #555;margin: 0;line-height: 1.5 }
+    .test-list-item .btn-test { padding: 8px 16px; font-size: 0.85rem; flex: 0 0 auto; width: auto; }
+    .btn-test.locked { background: #e9ecef;color: var(--lock-color);cursor: not-allowed }
+    .btn-test.locked:hover { transform: none;box-shadow: none }
+    .student-subject-tests { 
+      max-width: var(--page-max-width);
+      margin: 20px auto; 
+      padding: 15px; 
+      background: #f9f8ff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 1px solid #e0d9f5 
+    }
+    .student-subject-tests h2 { text-align: center;font-size: clamp(1.4rem, 2.5vw, 1.8rem);color: #4a148c;text-transform: uppercase;letter-spacing: 1px;margin-bottom: 20px;font-weight: 800;text-decoration: underline;text-underline-offset: 6px;text-decoration-thickness: 2px }
+    .student-subject-tests .test-list-item { border: 1px solid #e0d9f5 }
+    .student-subject-tests .test-list-item-content h3 { color: #673ab7 }
+    
+    /* Profile Section (REMOVED) */
+    /* Subscription Section (REMOVED) */
+    
+    @media (max-width: 900px) { /* NEW MEDIA QUERY FOR BUTTONS */
+        .nav-btn-flex {
+            margin: 4px 5px; /* Reduce margin on medium screens */
+            max-width: 48%; /* Allow two buttons per row */
+            flex: 1 1 45%;
+        }
+    }
+    @media (max-width: 640px){
+      .nav-button {
+          /* flex-grow is handled by nav-btn-flex on smaller screens */
+          justify-content: center;
+          margin: 4px 2px;
+          font-size: 0.8rem;
+          padding: 0.4rem 0.8rem;
+      }
+      .nav-btn-flex {
+          max-width: 100%; /* Full width on tiny screens */
+          flex: 1 1 100%;
+          margin: 4px 0;
+      }
+      .test-list-container {
+         gap: 10px !important; 
+      }
+      .test-list-item {
+        flex-direction: column; 
+        align-items: flex-start; 
+        padding: 10px 14px; 
+        gap: 6px; 
+      }
+      .test-list-item-content { flex: 1 1 100% }
+      .test-list-item-content p { margin-bottom: 6px }
+      .test-list-item .btn-test { width: 100%;text-align: center }
+    }
+    
+  </style>
+</head>
+<body class="bg-gray-50">
+
+<!-- Header, Nav, Login Screen Removed -->
+
+<div id="dashboardContent">
+
+  <!-- NEW CLASS SELECTOR BOX -->
+  <section class="class-selector-box">
+      <!-- Label removed as requested -->
+      <div class="class-selector-controls">
+          <select id="classSelector" aria-label="Select your class">
+              <option value="3">Class 3</option>
+              <option value="4">Class 4</option>
+              <option value="5">Class 5</option>
+              <option value="6" selected>Class 6</option>
+              <option value="7">Class 7</option>
+              <option value="8">Class 8</option>
+              <option value="9">Class 9</option>
+              <option value="10">Class 10</option>
+          </select>
+          <button id="updateClassButton">Show Tests</button>
+      </div>
+  </section>
+  <!-- END NEW CLASS SELECTOR BOX -->
+  
+  <!-- Welcome, TC Score Panel REMOVED -->
+
+  <!-- MODIFIED: BACKGROUND ADDED HERE -->
+  <section class="free-test-promo-section" id="freeTestPromo">
+    <h3>Test Your Knowledge for Free!</h3>
+    <p>Ready to see how much you really know? Take our quick and easy knowledge test to challenge yourself and discover your score instantly. These tests are completely free, fun, and designed to help you learn while you play. Improve your skills and track your progress — Check Now!</p>
+    <button onclick="handleTestClick('general_free_test')">Start Free Test</button>
+  </section>
+  <section class="live-tests">
+    <div class="tests-inner">
+      <div class="test-row">
+      </div>
+    </div>
+  </section>
+  <section class="student-report">
+    <div class="sr-box" role="region" aria-label="Student report">
+      <!-- Plan Promo Box (REMOVED) -->
+      
+      <!-- sr-stats DIV REMOVED AS REQUESTED -->
+
+    </div>
+  </section>
+  
+  <!-- SRM CONTACT SECTION REMOVED AS REQUESTED -->
+  
+  <section class="subject-tests">
+    <h2>Student General Test Corner</h2>
+    <div class="test-list-container gap-3">
+      <article class="test-list-item">
+        <div class="test-list-item-content">
+          <h3><strong>General Awareness Learn & Tests</strong></h3>
+          <p>Sharpen your knowledge of current events, history, and the world around you.</p>
+        </div>
+        <button id="btn_general_awareness" class="btn-test" onclick="handleTestClick('general_awareness')">
+            <span class="btn-text">Take Test</span>
+        </button>
+      </article>
+      <article class="test-list-item">
+        <div class="test-list-item-content">
+          <h3><strong>General Maths Awareness Learn & Tests</strong></h3>
+          <p>Challenge your problem-solving skills with a comprehensive mathematics assessment.</p>
+        </div>
+        <button id="btn_general_maths" class="btn-test" onclick="handleTestClick('general_maths')">
+            <span class="btn-text">Take Test</span>
+        </button>
+      </article>
+      <article class="test-list-item">
+        <div class="test-list-item-content">
+          <h3><strong>Advanced Maths for Entrance Exams</strong></h3>
+          <p>Prepare for competitive exams with advanced concepts and challenging problems.</p>
+        </div>
+        <button id="btn_advance_maths" class="btn-test" onclick="handleTestClick('advance_maths')">
+            <span class="btn-text">Take Test</span>
+        </button>
+      </article>
+    </div>
+  </section>
+  <section class="student-subject-tests" id="studentSubjectTestsSection">
+    <h2>Student Subject Tests Corner</h2>
+    <div class="test-list-container">
+      <article class="test-list-item" id="item_telugu">
+        <div class="test-list-item-content">
+          <h3><strong>Telugu Subject Tests</strong></h3>
+          <p>Test your understanding of Telugu grammar and literature.</p>
+        </div>
+        <button id="btn_telugu" class="btn-test" onclick="handleTestClick('telugu')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_english">
+        <div class="test-list-item-content">
+          <h3><strong>English Subject Tests</strong></h3>
+          <p>Assess your English comprehension, vocabulary, and grammar skills.</p>
+        </div>
+        <button id="btn_english" class="btn-test" onclick="handleTestClick('english')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_evs_sem1">
+        <div class="test-list-item-content">
+          <h3><strong>Evs SEM1 Subject Tests</strong></h3>
+          <p>Explore your knowledge of Environmental Science (Semester 1) concepts.</p>
+        </div>
+        <button id="btn_evs_sem1" class="btn-test" onclick="handleTestClick('evs_sem1')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_evs_sem2">
+        <div class="test-list-item-content">
+          <h3><strong>Evs SEM2 Subject Tests</strong></h3>
+          <p>Explore your knowledge of Environmental Science (Semester 2) concepts.</p>
+        </div>
+        <button id="btn_evs_sem2" class="btn-test" onclick="handleTestClick('evs_sem2')">Take Test</button> 
+      </article>
+      <article class="test-list-item" id="item_maths_sem1">
+        <div class="test-list-item-content">
+          <h3><strong>Maths SEM1 Subject Tests</strong></h3>
+          <p>Practice and master all the mathematics (Semester 1) topics.</p>
+        </div>
+        <button id="btn_maths_sem1" class="btn-test" onclick="handleTestClick('maths_sem1')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_maths_sem2">
+        <div class="test-list-item-content">
+          <h3><strong>Maths SEM2 Subject Tests</strong></h3>
+          <p>Practice and master all the mathematics (Semester 2) topics.</p>
+        </div>
+        <button id="btn_maths_sem2" class="btn-test" onclick="handleTestClick('maths_sem2')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_hindi">
+        <div class="test-list-item-content">
+          <h3><strong>Hindi Subject Tests</strong></h3>
+          <p>Test your knowledge of Hindi grammar and language skills.</p>
+        </div>
+        <button id="btn_hindi" class="btn-test" onclick="handleTestClick('hindi')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_general_science">
+        <div class="test-list-item-content">
+          <h3><strong>General Science Subject Tests</strong></h3>
+          <p>Explore general science topics covering basics of Physics, Chemistry, and Biology.</p>
+        </div>
+        <button id="btn_general_science" class="btn-test" onclick="handleTestClick('general_science')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_physical_sem1">
+        <div class="test-list-item-content">
+          <h3><strong>Physical Science SEM 1 Tests</strong></h3>
+          <p>Semester 1 assessment for Physics and Chemistry topics.</p>
+        </div>
+        <button id="btn_physical_sem1" class="btn-test" onclick="handleTestClick('physical_sem1')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_physical_sem2">
+        <div class="test-list-item-content">
+          <h3><strong>Physical Science SEM 2 Tests</strong></h3>
+          <p>Semester 2 assessment for Physics and Chemistry topics.</p>
+        </div>
+        <button id="btn_physical_sem2" class="btn-test" onclick="handleTestClick('physical_sem2')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_biological_sem1">
+        <div class="test-list-item-content">
+          <h3><strong>Biological Science SEM 1 Tests</strong></h3>
+          <p>Semester 1 assessment for Biology and Life Science topics.</p>
+        </div>
+        <button id="btn_biological_sem1" class="btn-test" onclick="handleTestClick('biological_sem1')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_biological_sem2">
+        <div class="test-list-item-content">
+          <h3><strong>Biological Science SEM 2 Tests</strong></h3>
+          <p>Semester 2 assessment for Biology and Life Science topics.</p>
+        </div>
+        <button id="btn_biological_sem2" class="btn-test" onclick="handleTestClick('biological_sem2')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_social_sem1">
+        <div class="test-list-item-content">
+          <h3><strong>Social Studies SEM 1 Tests</strong></h3>
+          <p>Semester 1 assessment covering History, Civics, and Geography.</p>
+          </div>
+        <button id="btn_social_sem1" class="btn-test" onclick="handleTestClick('social_sem1')">Take Test</button>
+      </article>
+      <article class="test-list-item" id="item_social_sem2">
+        <div class="test-list-item-content">
+          <h3><strong>Social Studies SEM 2 Tests</strong></h3>
+          <p>Semester 2 assessment covering History, Civics, and Geography.</p>
+        </div>
+        <button id="btn_social_sem2" class="btn-test" onclick="handleTestClick('social_sem2')">Take Test</button>
+      </article>
+    </div>
+  </section>
+  
+  <!-- Profile Section Removed -->
+  
+  <!-- Subscription Section Removed -->
+  
+</div>
+
+<!-- Footer Removed -->
+
+<script>
+    // --- Global Variables ---
+    // MODIFIED: Student class is now read from the dropdown
+    const classSelector = document.getElementById('classSelector');
+    let studentClass = parseInt(classSelector.value, 10); 
+    
+    const studentSubjectTestsSection = document.getElementById('studentSubjectTestsSection');
+    
+    // Map of test IDs to their corresponding URLs based on class
+    const urlMap = {
+        'general_free_test': {
+            3: 'https://www.svtc.life', 4: 'https://www.svtc.life', 5: 'https://www.svtc.life',
+            6: 'https://www.svtc.life', 7: 'https://www.svtc.life', 8: 'https://www.svtc.life',
+            9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'telugu': {
+            3: '', 4: '', 5: '', 6: 'https://www.svtc.life', 7: 'https://www.svtc.life',
+            8: 'https://www.svtc.life', 9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'english': { 
+            3: '', 4: '', 5: '', 6: 'https://www.svtc.life', 7: 'https://www.svtc.life',
+            8: 'https://www.svtc.life', 9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'evs_sem1': { 
+            3: '', 4: '', 5: '', 6: 'locked', 7: 'locked', 8: 'locked', 9: 'locked', 10: 'locked',
+        },
+        'evs_sem2': { 
+            3: '', 4: '', 5: '', 6: 'locked', 7: 'locked', 8: 'locked', 9: 'locked', 10: 'locked',
+        },
+        'maths_sem1': { 
+            3: '', 4: '', 5: '', 6: 'https://www.svtc.life', 7: 'https://www.svtc.life',
+            8: 'https://www.svtc.life', 9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'maths_sem2': { 
+            3: '', 4: '', 5: '', 6: 'https://www.svtc.life', 7: 'https://www.svtc.life',
+            8: 'https://www.svtc.life', 9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'hindi': {
+            3: '', 4: '', 5: '', 6: 'https://www.svtc.life', 7: 'https://www.svtc.life',
+            8: 'https://www.svtc.life', 9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'general_science': { 
+            3: '', 4: '', 5: '', 6: 'https://www.svtc.life', 7: 'https://www.svtc.life',
+            8: 'locked', 9: 'locked', 10: 'locked',
+        },
+        'physical_sem1': { 
+            3: '', 4: '', 5: '', 6: 'locked', 7: 'locked', 8: 'https://www.svtc.life',
+            9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'physical_sem2': { 
+            3: '', 4: '', 5: '', 6: 'locked', 7: 'locked', 8: 'https://www.svtc.life',
+            9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'biological_sem1': { 
+            3: '', 4: '', 5: '', 6: 'locked', 7: 'locked', 8: 'https://www.svtc.life',
+            9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'biological_sem2': { 
+            3: '', 4: '', 5: '', 6: 'locked', 7: 'locked', 8: 'https://www.svtc.life',
+            9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'social_sem1': { 
+            3: 'https://www.svtc.life', 4: 'https://www.svtc.life', 5: 'https://www.svtc.life',
+            6: 'https://www.svtc.life', 7: 'https://www.svtc.life', 8: 'https://www.svtc.life',
+            9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'social_sem2': { 
+            3: 'https://www.svtc.life', 4: 'https://www.svtc.life', 5: 'https://www.svtc.life',
+            6: 'https://www.svtc.life', 7: 'https://www.svtc.life', 8: 'https://www.svtc.life',
+            9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'general_awareness': {
+            3: 'https://www.svtc.life', 4: 'https://www.svtc.life', 5: 'https://www.svtc.life',
+            6: 'https://www.svtc.life', 7: 'https://www.svtc.life', 8: 'https://www.svtc.life',
+            9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'general_maths': {
+            3: 'https://www.svtc.life', 4: 'https://www.svtc.life', 5: 'https://www.svtc.life',
+            6: 'https://www.svtc.life', 7: 'https://www.svtc.life', 8: 'https://www.svtc.life',
+            9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+        'advance_maths': {
+            3: 'https://www.svtc.life', 4: 'https://www.svtc.life', 5: 'https://www.svtc.life',
+            6: 'https://www.svtc.life', 7: 'https://www.svtc.life', 8: 'https://www.svtc.life',
+            9: 'https://www.svtc.life', 10: 'https://www.svtc.life',
+        },
+    };
+
+    /**
+     * Shows a temporary maintenance/locked message at the top of the screen.
+     * @param {string} [message] - The message to display.
+     * @param {string} [status] - 'red' for warning, 'green' for success.
+     */
+    function showServerMaintenance(message = 'This function is currently locked or under maintenance.', status = 'red'){
+      const t = document.createElement('div');
+      t.textContent = message;
+      t.style.position = 'fixed';
+      t.style.left = '50%';
+      t.style.top = '22px';
+      t.style.transform = 'translateX(-50%)';
+      // MODIFIED: Background color based on status
+      t.style.background = status === 'green' ? 'linear-gradient(90deg, #1e6b34, #4caf50)' : 'linear-gradient(90deg, #b33030, #ff7b00)';
+      t.style.color = '#fff';
+      t.style.padding = '12px 20px';
+      t.style.borderRadius = '10px';
+      t.style.zIndex = 14000;
+      t.style.fontWeight = 900;
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.transition = 'opacity .4s'; t.style.opacity = '0'; setTimeout(()=>t.remove(),500); }, 2500);
+    }
+
+    /**
+     * Opens the pricing page in a new tab.
+     */
+    function openPricingPage() {
+        window.open('https://www.svtc.life/Pricing.html', '_blank');
+    }
+
+    /**
+     * Handles clicks on test buttons, checking against the urlMap and studentClass.
+     * @param {string} testId - The ID of the test (e.g., 'general_awareness').
+     */
+    function handleTestClick(testId) {
+        const classUrls = urlMap[testId];
+        const targetUrl = (classUrls && classUrls[studentClass]) 
+                            ? classUrls[studentClass] 
+                            : 'locked'; 
+        
+        const button = document.getElementById(`btn_${testId}`);
+        
+        if (targetUrl === 'locked' || targetUrl === '') {
+            showServerMaintenance(`This subject is not available for your current class (${studentClass}th Class).`);
+            return;
+        }
+        
+        const newWindow = window.open(targetUrl, '_blank'); 
+        if (newWindow) {
+            newWindow.focus();
+        } else {
+             showServerMaintenance('Pop-ups blocked! Please allow pop-ups to start the test.');
+        }
+        
+        if (button) button.animate([{transform:'scale(1)'},{transform:'scale(1.04)'},{transform:'scale(1)'}],{duration:360});
+    }
+
+    /**
+     * Configures subject test buttons based on studentClass.
+     * Hides, locks, or enables buttons as per the urlMap.
+     */
+    function setupSubjectButtons() {
+        const testIds = Object.keys(urlMap).filter(id => id !== 'general_free_test'); 
+        
+        testIds.forEach(testId => {
+            const button = document.getElementById(`btn_${testId}`);
+            const listItem = document.getElementById(`item_${testId}`);
+            if (!button || !listItem) return;
+
+            const targetUrl = (urlMap[testId] && urlMap[testId][studentClass]) ? urlMap[testId][studentClass] : 'locked';
+
+            listItem.classList.remove('hidden'); 
+            
+            if (targetUrl === '') {
+                 // This test doesn't exist for this class, so hide it
+                 listItem.classList.add('hidden'); 
+            } else if (targetUrl === 'locked') {
+                // Test exists but is locked for this class
+                button.classList.add('locked');
+                button.setAttribute('onclick', `showServerMaintenance('This subject is not available for your current class (${studentClass}th Class).');`);
+                button.innerHTML = `<svg class="lock-icon" viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H8.9V6zM18 20H6V10h12v10z"/></svg> <span class="btn-text">Take Test</span>`;
+            } else {
+                // Test is available
+                button.classList.remove('locked');
+                button.setAttribute('onclick', `handleTestClick('${testId}')`);
+                button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M10 17l5-5-5-5v10z"/></svg> <span class="btn-text">Take Test</span>`;
+            }
+        });
+
+        // Special rule for hiding the whole "Subject Tests" section for classes 3, 4, 5
+        if (studentSubjectTestsSection && [3, 4, 5].includes(studentClass)) {
+             studentSubjectTestsSection.classList.add('hidden');
+        } else if (studentSubjectTestsSection) {
+             studentSubjectTestsSection.classList.remove('hidden');
+        }
+    }
+
+    /**
+     * Animates the TC Score ring/bar from 0 to the target value.
+     */
+    function animateTCRing(){
+      const target = 29; // Target percentage
+      const liveBar = document.getElementById('tcLiveBar'); 
+      const pctText = document.getElementById('tcPercent');
+      
+      if (!liveBar || !pctText) return; // Exit if elements aren't found
+
+      let current = 0;
+      const step = Math.max(1, Math.round(target / 60)); // Animation steps
+      
+      if (window.tcLiveInterval) clearInterval(window.tcLiveInterval); 
+
+      window.tcLiveInterval = setInterval(()=>{
+        current += step;
+        if(current >= target){ 
+            current = target; 
+            clearInterval(window.tcLiveInterval); 
+        }
+        liveBar.style.width = current + '%';
+        pctText.textContent = current + '%';
+      },16); // ~60fps
+    }
+
+    // --- Make functions globally accessible for inline HTML attributes ---
+    window.handleTestClick = handleTestClick;
+    window.showServerMaintenance = showServerMaintenance;
+    window.openPricingPage = openPricingPage; 
+
+    // --- Run on page load ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // NEW: Add event listener for the class update button
+        const updateButton = document.getElementById('updateClassButton');
+        if (updateButton) {
+            updateButton.addEventListener('click', () => {
+                const newClass = parseInt(classSelector.value, 10);
+                
+                // Update the global studentClass variable
+                studentClass = newClass;
+                
+                // Re-run the button logic to show/hide tests for the new class
+                setupSubjectButtons(); 
+                
+                // Show a success message - REMOVED AS REQUESTED
+                // showServerMaintenance(`Loaded tests for Class ${studentClass}.`, 'green');
+            });
+        }
+
+        // Setup buttons and animations now that the dashboard is always visible
+        setupSubjectButtons(); // This runs on initial load with the default class
+        // animateTCRing(); // Function removed as per request
+    });
+</script>
+</body>
+</html>
