@@ -659,7 +659,10 @@
             fetch(scriptURL, {
                 method: 'POST',
                 redirect: 'follow',
-                // REMOVED HEADERS to avoid CORS preflight on file://
+                // Important: Set proper content type for GAS to handle POST data correctly
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
                 body: JSON.stringify(payload) 
             })
             .then(response => {
@@ -686,14 +689,7 @@
             .catch(error => {
                 hideModal(loadingModal);
                 console.error('Error:', error);
-                
-                let errorMsg = 'Connection Error: ' + error.message;
-                // Custom message for local file testing
-                if (window.location.protocol === 'file:') {
-                    errorMsg += ' (NOTE: This form may not work when opened directly from a folder. Please host it on GitHub or a web server.)';
-                }
-                
-                showMessage(errorMsg, 'error');
+                showMessage('Connection Error: ' + error.message + '. Please double check if you have deployed the script as "Anyone".', 'error');
             })
             .finally(() => {
                 submitButton.disabled = false;
